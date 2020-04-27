@@ -2,6 +2,39 @@ import numpy as np
 import cv2
 import imutils
 
+def vignette_filter_photo(img):
+	rows, cols = img.shape[:2]
+	# generating vignette mask using Gaussian kernels
+	kernel_x = cv2.getGaussianKernel(cols, 200)
+	kernel_y = cv2.getGaussianKernel(rows, 200)
+	kernel = kernel_y * kernel_x.T
+	mask = 255 * kernel / np.linalg.norm(kernel)
+	output = np.copy(img)
+	# applying the mask to each channel in the input image
+	for i in range(3):
+		output[:, :, i] = output[:, :, i] * mask
+	return output
+
+def cartoonize_photos(img, ksize=5):
+	num_repetitions, sigma_color, sigma_space, ds_factor = 10, 5, 7, 4
+	# Convert image to grayscale
+	img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	# Apply median filter to the grayscale image
+	img_gray = cv2.medianBlur(img_gray, 7)
+	# Detect edges in the image and threshold it
+	edges = cv2.Laplacian(img_gray, cv2.CV_8U, ksize=ksize)
+	ret, mask = cv2.threshold(edges, 100, 255, cv2.THRESH_BINARY_INV)
+	# Resize the image to a smaller size for faster computation
+	img_small = cv2.resize(img, None, fx=1.0/ds_factor, fy=1.0/ds_factor, interpolation=cv2.INTER_AREA)
+	# Apply bilateral filter the image multiple times
+	for i in range(num_repetitions):
+		img_small = cv2.bilateralFilter(img_small, ksize, sigma_color,sigma_space)
+	img_output = cv2.resize(img_small, None, fx=ds_factor, fy=ds_factor, interpolation=cv2.INTER_LINEAR)
+	dst = np.zeros(img_gray.shape)
+	# Add the thick boundary lines to the image using 'AND' operator
+	dst = cv2.bitwise_and(img_output, img_output, mask=mask)
+	return dst
+
 
 def convert_to_pencil_sketch(rgb_image):
 	gray_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2GRAY)
@@ -65,10 +98,10 @@ def four_point_transform(image, pts):
 
 	# compute the perspective transform matrix and then apply it
 	M = cv2.getPerspectiveTransform(rect, dst)
-	wraped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
+	warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
 
 	# return the warped image
-	return wraped
+	return warped
 
 def scaner(image):
 
@@ -81,8 +114,6 @@ def scaner(image):
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	gray = cv2.GaussianBlur(gray, (5, 5), 0)
 	edged = cv2.Canny(gray, 75, 200)
-
-
 
 	# find the contours in the edged image, keeping only the
 	# largest ones, and initialize the screen contour
@@ -101,11 +132,7 @@ def scaner(image):
 		if len(approx) == 4:
 			screenCnt = approx
 			break
-
-
-	wraped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
-
-
+	warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
 	kernel_sharpen_1 = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
-	wraped = cv2.filter2D(wraped, -1, kernel_sharpen_1)
-	return wraped
+	warped = cv2.filter2D(warped, -1, kernel_sharpen_1)
+	return warped
