@@ -9,7 +9,7 @@ from opencv_app import convert_to_pencil_sketch, scaner, cartoonize_photos, vign
 
 ###############################################################################################################
 photos_path ="C:\\Users\\Bokhodir\\PycharmProjects\\Multimedia-Computing-IUT-telegram-bot\\static\\Photos\\"
-API_TOKEN = '1087119303:AAGcKmpW5_FN4elBJ4M9O1wfeDkDw8gY1uM'
+API_TOKEN = 'your Token'
 
 ###############################################################################################################
 bot = telebot.TeleBot(API_TOKEN)
@@ -232,7 +232,7 @@ def cartoonize_photo(message):
 ################################################################################################################
 
 
-#################################### scan_document ###################################################
+#################################### vignette filter ###################################################
 
 
 @bot.message_handler(func=button_checker_vfb)
