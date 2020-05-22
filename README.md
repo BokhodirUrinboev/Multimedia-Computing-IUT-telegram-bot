@@ -53,6 +53,19 @@ Basically, it divides into 4 features:
 
 #3. EXPERIMENT RESULTS
 
+##cartoonize image
+![cartoonize](https://user-images.githubusercontent.com/40819423/82634756-0b3e4580-9c18-11ea-9dcf-e65d697338e4.jpg)
+
+
 ##vignette filter image
-![vignette]
-(https://github.com/BokhodirUrinboev/Multimedia-Computing-IUT-telegram-bot/blob/master/images/vignette.jpg)
+![vignette](https://user-images.githubusercontent.com/40819423/82634947-81db4300-9c18-11ea-9424-c86c1029dc3e.jpg)
+
+
+
+##Sketch image
+![sketch](https://user-images.githubusercontent.com/40819423/82634989-9ae3f400-9c18-11ea-888a-0c0bb900001e.jpg)
+
+
+
+##Scan document
+![document](https://user-images.githubusercontent.com/40819423/82635018-ad5e2d80-9c18-11ea-9351-d12555e6435e.jpg)
