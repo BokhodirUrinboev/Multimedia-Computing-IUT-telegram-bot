@@ -72,4 +72,7 @@ Basically, it divides into 4 features:
 ## Scan document
 ![document](https://user-images.githubusercontent.com/40819423/82635018-ad5e2d80-9c18-11ea-9351-d12555e6435e.jpg)
 
+![Alt Text](https://gfycat.com/zealousserpentinearmyant)
+
+
 
