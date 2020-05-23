@@ -6,11 +6,12 @@ import cv2
 from telebot import types
 import datetime
 from opencv_app import convert_to_pencil_sketch, scaner, cartoonize_photos, vignette_filter_photo
+from setings import API_TOKEN
 
 ###############################################################################################################
 photos_path ="C:\\Users\\Bokhodir\\PycharmProjects\\Multimedia-Computing-IUT-telegram-bot\\static\\Photos\\"
-API_TOKEN = 'your Token'
 
+app = Flask(__name__)
 ###############################################################################################################
 bot = telebot.TeleBot(API_TOKEN)
 ###############################################################################################################
@@ -291,4 +292,21 @@ def vignette_filter(message):
 
 
 
-bot.polling()
+# bot.polling()
+
+
+@app.route('/' + API_TOKEN , methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+#https://api.telegram.org/bot<868081058:AAFSj3Q2diNtIJnd0pt1xtC02HhhP06qxRs>/deleteWebhook?url=https://17f6244e.ngrok.io/
+@app.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://43b557e6.ngrok.io/' + API_TOKEN)
+    return "!", 200
+
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=int(os.environ.get('PORT', 5000)))
