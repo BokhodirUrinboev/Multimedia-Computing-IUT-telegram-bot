@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 import imutils
+import pytesseract
+from PIL import Image
 
 def vignette_filter_photo(img):
 	rows, cols = img.shape[:2]
@@ -136,3 +138,16 @@ def scaner(image):
 	kernel_sharpen_1 = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
 	warped = cv2.filter2D(warped, -1, kernel_sharpen_1)
 	return warped
+
+def image_to_text(image_dir,dir_name):
+	# shutil.rmtree(config["temp_dir_img"], ignore_errors=True)
+	# os.makedirs(config["temp_dir_img"])
+	file_path= image_dir
+	im = Image.open(file_path)
+	im.save(dir_name)
+	image = cv2.imread(dir_name)
+	image = cv2.resize(image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+	retval, threshold = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
+
+	text = pytesseract.image_to_string(threshold)
+	return text

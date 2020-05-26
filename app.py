@@ -5,7 +5,7 @@ import telebot
 import cv2
 from telebot import types
 import datetime
-from opencv_app import convert_to_pencil_sketch, scaner, cartoonize_photos, vignette_filter_photo
+from opencv_app import convert_to_pencil_sketch, scaner, cartoonize_photos, vignette_filter_photo, image_to_text
 from setings import API_TOKEN
 
 ###############################################################################################################
@@ -20,6 +20,7 @@ DOCUMENT_SCAN_BUTTON = "SCAN DOCUMENT"
 SKETCH_BUTTON = "SKETCH IMAGE"
 CARTUNIZE_BUTTON = "CARTOONIZE IMAGE"
 VIGNETTE_FILTER_BUTTON = "VIGNETTE FILTER IMAGE"
+IMG_TO_TEXT_BUTTON = "IMAGE TO TEXT"
 ###############################################################################################################
 
 
@@ -37,6 +38,7 @@ def start(message):
     markup.add(types.KeyboardButton(SKETCH_BUTTON))
     markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
     markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
+    markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
 
     bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
 
@@ -52,6 +54,10 @@ def button_checker_cb(message):
 
 def button_checker_vfb(message):
     return message.text == VIGNETTE_FILTER_BUTTON
+
+
+def button_checker_ittb(message):
+    return message.text == IMG_TO_TEXT_BUTTON
 
 ##################################################################################################
 #################################### scan_document ###################################################
@@ -94,7 +100,7 @@ def document_scan(message):
         cv2.imwrite(USER['photo_name'], scaned)
         photo = open(USER['photo_name'], 'rb')
         msg = bot.send_photo(USER['chat_id'], photo)
-        #os.remove(USER['photo_name'])
+        # os.remove(USER['photo_name'])
         for i in USERS:
             if i['chat_id'] == chat_id:
                 USERS.remove(i)
@@ -105,6 +111,7 @@ def document_scan(message):
         markup.add(types.KeyboardButton(SKETCH_BUTTON))
         markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
         markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
+        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
 
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
@@ -152,17 +159,17 @@ def sketch_photo(message):
         cv2.imwrite(USER['photo_name'], sketched)
         photo = open(USER['photo_name'], 'rb')
         msg = bot.send_photo(USER['chat_id'], photo)
-        #os.remove(USER['photo_name'])
+        # os.remove(USER['photo_name'])
         for i in USERS:
             if i['chat_id'] == chat_id:
                 USERS.remove(i)
 
         markup = types.ReplyKeyboardMarkup()
-
         markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
         markup.add(types.KeyboardButton(SKETCH_BUTTON))
         markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
         markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
+        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
 
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
@@ -213,17 +220,17 @@ def cartoonize_photo(message):
         cv2.imwrite(USER['photo_name'], sketched)
         photo = open(USER['photo_name'], 'rb')
         msg = bot.send_photo(USER['chat_id'], photo)
-        #os.remove(USER['photo_name'])
+        # os.remove(USER['photo_name'])
         for i in USERS:
             if i['chat_id'] == chat_id:
                 USERS.remove(i)
 
         markup = types.ReplyKeyboardMarkup()
-
         markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
         markup.add(types.KeyboardButton(SKETCH_BUTTON))
         markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
         markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
+        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
         msg = bot.send_message(chat_id=chat_id, text="Send Photo only")
@@ -273,7 +280,66 @@ def vignette_filter(message):
         cv2.imwrite(USER['photo_name'], scaned)
         photo = open(USER['photo_name'], 'rb')
         msg = bot.send_photo(USER['chat_id'], photo)
-        #os.remove(USER['photo_name'])
+        # os.remove(USER['photo_name'])
+        for i in USERS:
+            if i['chat_id'] == chat_id:
+                USERS.remove(i)
+
+        markup = types.ReplyKeyboardMarkup()
+        markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
+        markup.add(types.KeyboardButton(SKETCH_BUTTON))
+        markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
+        markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
+        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
+        bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
+    else:
+        msg = bot.send_message(chat_id=chat_id, text="Send Photo only")
+        bot.register_next_step_handler(msg, vignette_filter)
+
+
+
+
+@bot.message_handler(func=button_checker_ittb)
+def img_to_text_msg(message):
+    global USERS
+    chat_id = message.chat.id
+    USER = {}
+    USER['chat_id'] = chat_id
+    USERS.append(USER)
+    msg = bot.send_message(chat_id=chat_id, text="Now send me photo of document")
+    bot.register_next_step_handler(msg, img_to_text)
+
+
+def img_to_text(message):
+    global USERS
+    global photos_path
+
+    msg = message.text
+    chat_id = message.chat.id
+    if message.content_type == 'photo':
+        USER = {}
+        for i in USERS:
+            if i['chat_id'] == chat_id:
+                USER = i
+                basename = photos_path + "user_photo"
+                suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S" + ".")
+                photo_name = "_".join([basename, suffix])
+                USER['photo_name'] = photo_name
+        file_info = message.photo[-1].file_id
+        file = bot.get_file(file_info)
+        downloaded_file = bot.download_file(file.file_path)
+
+        with open(USER['photo_name']+"jpg", 'wb') as new_file:
+            new_file.write(downloaded_file)
+
+        text = image_to_text(USER['photo_name']+"jpg", USER['photo_name']+"png")
+        if(text != ""):
+            msg = bot.send_message(USER['chat_id'], text)
+        else:
+            msg = bot.send_message(USER['chat_id'], "Could not detect the word sorry ")
+        os.remove(USER['photo_name']+"jpg")
+        os.remove(USER['photo_name']+"png")
+
         for i in USERS:
             if i['chat_id'] == chat_id:
                 USERS.remove(i)
@@ -284,13 +350,15 @@ def vignette_filter(message):
         markup.add(types.KeyboardButton(SKETCH_BUTTON))
         markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
         markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
+        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
 
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
         msg = bot.send_message(chat_id=chat_id, text="Send Photo only")
-        bot.register_next_step_handler(msg, vignette_filter)
+        bot.register_next_step_handler(msg, document_scan)
 
 
+################################################################################################################
 
 # bot.polling()
 
@@ -304,7 +372,7 @@ def getMessage():
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://43b557e6.ngrok.io/' + API_TOKEN)
+    bot.set_webhook(url='https://67f498d7.ngrok.io/' + API_TOKEN)
     return "!", 200
 
 
