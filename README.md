@@ -53,6 +53,7 @@ Basically, it divides into 4 features:
 • cartoonize image
 • sketch image
 • scan document
+• image to text
 ```
 
 # 3. EXPERIMENT RESULTS
