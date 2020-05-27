@@ -78,6 +78,10 @@ Basically, it divides into 4 features:
 ![document](https://user-images.githubusercontent.com/40819423/82635018-ad5e2d80-9c18-11ea-9351-d12555e6435e.jpg)
 
 ## image to text
+#### You need to install pytesseract 
+```
+http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-setup-4.00.00dev.exe
+```
 ![image to text](https://user-images.githubusercontent.com/40819423/82929603-6025e700-9f9d-11ea-8922-31059a875f8f.png)
 
 
