@@ -95,14 +95,14 @@ def document_scan(message):
 
         with open(USER['photo_name'], 'wb') as new_file:
             new_file.write(downloaded_file)
-        image = cv2.imread(USER['photo_name'])
-        scaned = scaner(image)
-        cv2.imwrite(USER['photo_name'], scaned)
-        photo = open(USER['photo_name'], 'rb')
-        msg = bot.send_photo(USER['chat_id'], photo)
-        # os.remove(USER['photo_name'])
+
+        if(scaner(USER['photo_name'])):
+            photo = open(USER['photo_name'], 'rb')
+            msg = bot.send_photo(USER['chat_id'], photo)
+
         for i in USERS:
             if i['chat_id'] == chat_id:
+                # os.remove(USER['photo_name'])
                 USERS.remove(i)
 
         markup = types.ReplyKeyboardMarkup()
@@ -372,7 +372,7 @@ def getMessage():
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://67f498d7.ngrok.io/' + API_TOKEN)
+    bot.set_webhook(url='https://10a3bf74.ngrok.io/' + API_TOKEN)
     return "!", 200
 
 

@@ -105,8 +105,8 @@ def four_point_transform(image, pts):
 	# return the warped image
 	return warped
 
-def scaner(image):
-
+def scaner(image_dir):
+	image = cv2.imread(image_dir)
 	ratio = image.shape[0] / 500.0
 	orig = image.copy()
 	image = imutils.resize(image, height = 500)
@@ -137,7 +137,8 @@ def scaner(image):
 	warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
 	kernel_sharpen_1 = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
 	warped = cv2.filter2D(warped, -1, kernel_sharpen_1)
-	return warped
+	cv2.imwrite(image_dir, warped)
+	return True
 
 def image_to_text(image_dir,dir_name):
 	# shutil.rmtree(config["temp_dir_img"], ignore_errors=True)
