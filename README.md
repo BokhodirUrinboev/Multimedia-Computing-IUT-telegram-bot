@@ -87,7 +87,7 @@ http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-setup-4.00.00dev.exe
 
 ## Deal with it gif maker
 ### You need to send cool photo of yours it will make a gift of it
-![gif](https://media.giphy.com/media/kH5bL2DCxND2rYTKhI/source.gif)
+![gif](https://media3.giphy.com/media/kH5bL2DCxND2rYTKhI/source.gif)
 
 ## Video 
 > [![Video](https://img.youtube.com/vi/yFKyAgxBhUQ/2.jpg)](https://www.youtube.com/watch?v=yFKyAgxBhUQ&feature=youtu.be)
