@@ -5,12 +5,12 @@ import telebot
 import cv2
 from telebot import types
 import datetime
-from opencv_app import convert_to_pencil_sketch, scaner, cartoonize_photos, vignette_filter_photo, image_to_text
+from opencv_app import convert_to_pencil_sketch, scaner, cartoonize_photos, vignette_filter_photo, image_to_text, deal_with_it
 from setings import API_TOKEN
 
 ###############################################################################################################
 photos_path ="C:\\Users\\Bokhodir\\PycharmProjects\\Multimedia-Computing-IUT-telegram-bot\\static\\Photos\\"
-
+gif_path ="C:\\Users\\Bokhodir\\PycharmProjects\\Multimedia-Computing-IUT-telegram-bot\\static\\gif\\"
 app = Flask(__name__)
 ###############################################################################################################
 bot = telebot.TeleBot(API_TOKEN)
@@ -21,6 +21,8 @@ SKETCH_BUTTON = "SKETCH IMAGE"
 CARTUNIZE_BUTTON = "CARTOONIZE IMAGE"
 VIGNETTE_FILTER_BUTTON = "VIGNETTE FILTER IMAGE"
 IMG_TO_TEXT_BUTTON = "IMAGE TO TEXT"
+DEAL_WITH_IT_BUTTON = "DEAL WITH IT GIF CREATOR"
+ALL_BUTTONS = [DOCUMENT_SCAN_BUTTON, SKETCH_BUTTON, CARTUNIZE_BUTTON, VIGNETTE_FILTER_BUTTON, IMG_TO_TEXT_BUTTON, DEAL_WITH_IT_BUTTON]
 ###############################################################################################################
 
 
@@ -33,13 +35,8 @@ def start(message):
             USERS.remove(i)
 
     markup = types.ReplyKeyboardMarkup()
-
-    markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
-    markup.add(types.KeyboardButton(SKETCH_BUTTON))
-    markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
-    markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
-    markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
-
+    for j in ALL_BUTTONS:
+        markup.add(types.KeyboardButton(j))
     bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
 
 ###############################################################################################
@@ -58,6 +55,10 @@ def button_checker_vfb(message):
 
 def button_checker_ittb(message):
     return message.text == IMG_TO_TEXT_BUTTON
+
+def button_checker_gif(message):
+    return message.text == DEAL_WITH_IT_BUTTON
+
 
 ##################################################################################################
 #################################### scan_document ###################################################
@@ -107,11 +108,8 @@ def document_scan(message):
 
         markup = types.ReplyKeyboardMarkup()
 
-        markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
-        markup.add(types.KeyboardButton(SKETCH_BUTTON))
-        markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
-        markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
-        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
+        for j in ALL_BUTTONS:
+            markup.add(types.KeyboardButton(j))
 
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
@@ -165,11 +163,8 @@ def sketch_photo(message):
                 USERS.remove(i)
 
         markup = types.ReplyKeyboardMarkup()
-        markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
-        markup.add(types.KeyboardButton(SKETCH_BUTTON))
-        markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
-        markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
-        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
+        for j in ALL_BUTTONS:
+            markup.add(types.KeyboardButton(j))
 
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
@@ -226,11 +221,8 @@ def cartoonize_photo(message):
                 USERS.remove(i)
 
         markup = types.ReplyKeyboardMarkup()
-        markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
-        markup.add(types.KeyboardButton(SKETCH_BUTTON))
-        markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
-        markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
-        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
+        for j in ALL_BUTTONS:
+            markup.add(types.KeyboardButton(j))
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
         msg = bot.send_message(chat_id=chat_id, text="Send Photo only")
@@ -286,18 +278,15 @@ def vignette_filter(message):
                 USERS.remove(i)
 
         markup = types.ReplyKeyboardMarkup()
-        markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
-        markup.add(types.KeyboardButton(SKETCH_BUTTON))
-        markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
-        markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
-        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
+        for j in ALL_BUTTONS:
+            markup.add(types.KeyboardButton(j))
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
         msg = bot.send_message(chat_id=chat_id, text="Send Photo only")
         bot.register_next_step_handler(msg, vignette_filter)
 
 
-
+##########################################################IMAGE TO TEXT##########################################3
 
 @bot.message_handler(func=button_checker_ittb)
 def img_to_text_msg(message):
@@ -346,19 +335,79 @@ def img_to_text(message):
 
         markup = types.ReplyKeyboardMarkup()
 
-        markup.add(types.KeyboardButton(DOCUMENT_SCAN_BUTTON))
-        markup.add(types.KeyboardButton(SKETCH_BUTTON))
-        markup.add(types.KeyboardButton(CARTUNIZE_BUTTON))
-        markup.add(types.KeyboardButton(VIGNETTE_FILTER_BUTTON))
-        markup.add(types.KeyboardButton(IMG_TO_TEXT_BUTTON))
+        for j in ALL_BUTTONS:
+            markup.add(types.KeyboardButton(j))
 
         bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
     else:
         msg = bot.send_message(chat_id=chat_id, text="Send Photo only")
-        bot.register_next_step_handler(msg, document_scan)
+        bot.register_next_step_handler(msg, img_to_text)
 
 
 ################################################################################################################
+
+
+##########################################################DEAL WITH IT GIFS########################################
+
+
+@bot.message_handler(func=button_checker_gif)
+def gif_msg(message):
+    global USERS
+    chat_id = message.chat.id
+    USER = {}
+    USER['chat_id'] = chat_id
+    USERS.append(USER)
+    msg = bot.send_message(chat_id=chat_id, text="Now send me photo of yours")
+    bot.register_next_step_handler(msg, deal_with_it_f)
+
+
+def deal_with_it_f(message):
+    global USERS
+    global photos_path
+    global gif_path
+
+    msg = message.text
+    chat_id = message.chat.id
+    if message.content_type == 'photo':
+        USER = {}
+        for i in USERS:
+            if i['chat_id'] == chat_id:
+                USER = i
+                basename = photos_path + "user_photo"
+                base_gif = gif_path + "deal_with_it"
+                suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S" + ".")
+                photo_name = "_".join([basename, suffix])
+                gif_name = "_".join([base_gif, suffix])
+                USER['photo_name'] = photo_name
+                USER['gif_name'] = gif_name
+        file_info = message.photo[-1].file_id
+        file = bot.get_file(file_info)
+        downloaded_file = bot.download_file(file.file_path)
+
+        with open(USER['photo_name']+"jpg", 'wb') as new_file:
+            new_file.write(downloaded_file)
+
+        if(deal_with_it(USER['photo_name']+"jpg", USER['gif_name']+"gif")):
+            gif = open(USER['gif_name'] + "gif", 'rb')
+            bot.send_document(USER['chat_id'], gif)
+        else:
+            bot.send_message(USER['chat_id'], "Not reliable image")
+        # os.remove(USER['photo_name']+"jpg")
+        # os.remove(USER['gif_name']+"gif")
+
+        for i in USERS:
+            if i['chat_id'] == chat_id:
+                USERS.remove(i)
+
+        markup = types.ReplyKeyboardMarkup()
+        for j in ALL_BUTTONS:
+            markup.add(types.KeyboardButton(j))
+
+        bot.send_message(chat_id=chat_id, text="CHOOSE OPERATION TO PERFORM", reply_markup=markup)
+    else:
+        msg = bot.send_message(chat_id=chat_id, text="Send Photo only")
+        bot.register_next_step_handler(msg, deal_with_it_f)
+#########################################################################################################
 
 # bot.polling()
 
@@ -372,7 +421,7 @@ def getMessage():
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://10a3bf74.ngrok.io/' + API_TOKEN)
+    bot.set_webhook(url='https://8b4633c0e9f8.ngrok.io/' + API_TOKEN)
     return "!", 200
 
 
