@@ -22,6 +22,16 @@ This project is done by Bokhodir Urinboev |   for Multimedia Computing  | this i
  
 8. run the app.py file in order to run telegram bot
 	python app.py
+before running please download and install programs below:
+
+Tesseract:
+http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-setup-4.00.00dev.exe
+
+ImageMagic:
+https://imagemagick.org/script/download.php
+
+and don't forget to add to system path
+
 ```
 
 

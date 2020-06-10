@@ -421,7 +421,7 @@ def getMessage():
 @app.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://8b4633c0e9f8.ngrok.io/' + API_TOKEN)
+    bot.set_webhook(url='https://099d2284c928.ngrok.io/' + API_TOKEN)
     return "!", 200
 
 
